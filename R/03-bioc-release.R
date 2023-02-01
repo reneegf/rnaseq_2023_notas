@@ -10,3 +10,4 @@
 # It has 192 dependencies and it's available in all platforms.
 # It has 8 vignettes, it lokk like a really complex and complete package
 
+hola <- "Fernanda"
