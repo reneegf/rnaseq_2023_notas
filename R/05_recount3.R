@@ -56,3 +56,5 @@ colData(rse_gene_SRP009615)[
   grepl("^sra_attribute", colnames(colData(rse_gene_SRP009615)))
 ]
 
+
+iSEE::iSEE(rse_gene_SRP009615)

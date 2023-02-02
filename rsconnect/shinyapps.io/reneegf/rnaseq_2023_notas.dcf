@@ -1,0 +1,14 @@
+name: rnaseq_2023_notas
+title: rnaseq_2023_notas
+username:
+account: reneegf
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8195684
+bundleId: 6799320
+url: https://reneegf.shinyapps.io/rnaseq_2023_notas/
+when: 1675281257.08423
+lastSyncTime: 1675281257.08425
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: figuras/mtcars_gear_vs_mpg.pdf|R/01-notas.R|R/02-visualizar-mtcars.R|R/03-bioc-release.R|R/04_SummarizedExperiment.R|R/05_recount3.R
