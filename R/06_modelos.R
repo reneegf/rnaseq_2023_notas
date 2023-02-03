@@ -16,16 +16,16 @@ summary(lm(log(Volume) ~ log(Height) + log(Girth), data = trees))
 ## ----EMM_example1------------------
 ## Datos de ejemplo
 (sampleData <- data.frame(
-  genotype = rep(c("A", "B"), each = 4),
-  treatment = rep(c("ctrl", "trt"), 4)
+    genotype = rep(c("A", "B"), each = 4),
+    treatment = rep(c("ctrl", "trt"), 4)
 ))
 
 
 ## Creemos las imágenes usando ExploreModelMatrix
 vd <- ExploreModelMatrix::VisualizeDesign(
-  sampleData = sampleData,
-  designFormula = ~ genotype + treatment,
-  textSizeFitted = 4
+    sampleData = sampleData,
+    designFormula = ~ genotype,
+    textSizeFitted = 4
 )
 
 
@@ -34,14 +34,13 @@ cowplot::plot_grid(plotlist = vd$plotlist)
 
 
 
-
 ## ----EMM_example1_interactive, eval = FALSE----
 ## ## Usaremos shiny otra ves
-## app <- ExploreModelMatrix(
-##     sampleData = sampleData,
-##     designFormula = ~ genotype + treatment
-## )
-## if (interactive()) shiny::runApp(app)
+app <- ExploreModelMatrix::ExploreModelMatrix(
+    sampleData = sampleData,
+    designFormula = ~ genotype + treatment
+)
+if (interactive()) shiny::runApp(app)
 
 
 
@@ -57,10 +56,10 @@ human_projects <- available_projects()
 
 
 rse_gene_SRP045638 <- create_rse(
-  subset(
-    human_projects,
-    project == "SRP045638" & project_type == "data_sources"
-  )
+    subset(
+        human_projects,
+        project == "SRP045638" & project_type == "data_sources"
+    )
 )
 assay(rse_gene_SRP045638, "counts") <- compute_read_counts(rse_gene_SRP045638)
 
@@ -85,8 +84,8 @@ rse_gene_SRP045638 <- expand_sra_attributes(rse_gene_SRP045638)
 
 
 colData(rse_gene_SRP045638)[
-  ,
-  grepl("^sra_attribute", colnames(colData(rse_gene_SRP045638)))
+    ,
+    grepl("^sra_attribute", colnames(colData(rse_gene_SRP045638)))
 ]
 
 
@@ -95,15 +94,15 @@ colData(rse_gene_SRP045638)[
 ## ----re_cast-----------------------
 ## Pasar de character a nuemric o factor
 rse_gene_SRP045638$sra_attribute.age <- as.numeric(rse_gene_SRP045638$sra_attribute.age)
-rse_gene_SRP045638$sra_attribute.disease <- factor(rse_gene_SRP045638$sra_attribute.disease)
+rse_gene_SRP045638$sra_attribute.disease <- factor(tolower(rse_gene_SRP045638$sra_attribute.disease))
 rse_gene_SRP045638$sra_attribute.RIN <- as.numeric(rse_gene_SRP045638$sra_attribute.RIN)
 rse_gene_SRP045638$sra_attribute.sex <- factor(rse_gene_SRP045638$sra_attribute.sex)
 
 
 ## Resumen de las variables de interés
 summary(as.data.frame(colData(rse_gene_SRP045638)[
-  ,
-  grepl("^sra_attribute.[age|disease|RIN|sex]", colnames(colData(rse_gene_SRP045638)))
+    ,
+    grepl("^sra_attribute.[age|disease|RIN|sex]", colnames(colData(rse_gene_SRP045638)))
 ]))
 
 
@@ -163,8 +162,8 @@ round(nrow(rse_gene_SRP045638) / nrow(rse_gene_SRP045638_unfiltered) * 100, 2)
 ## ----normalize---------------------
 library("edgeR") # BiocManager::install("edgeR", update = FALSE)
 dge <- DGEList(
-  counts = assay(rse_gene_SRP045638, "counts"),
-  genes = rowData(rse_gene_SRP045638)
+    counts = assay(rse_gene_SRP045638, "counts"),
+    genes = rowData(rse_gene_SRP045638)
 )
 dge <- calcNormFactors(dge)
 
@@ -174,17 +173,17 @@ dge <- calcNormFactors(dge)
 ## ----explore_gene_prop_by_age------
 library("ggplot2")
 ggplot(as.data.frame(colData(rse_gene_SRP045638)), aes(y = assigned_gene_prop, x = prenatal)) +
-  geom_boxplot() +
-  theme_bw(base_size = 20) +
-  ylab("Assigned Gene Prop") +
-  xlab("Age Group")
+    geom_boxplot() +
+    theme_bw(base_size = 20) +
+    ylab("Assigned Gene Prop") +
+    xlab("Age Group")
 
 
 
 
 ## ----statiscal_model---------------
 mod <- model.matrix(~ prenatal + sra_attribute.RIN + sra_attribute.sex + assigned_gene_prop,
-                    data = colData(rse_gene_SRP045638)
+    data = colData(rse_gene_SRP045638)
 )
 colnames(mod)
 
@@ -200,10 +199,10 @@ eb_results <- eBayes(lmFit(vGene))
 
 
 de_results <- topTable(
-  eb_results,
-  coef = 2,
-  number = nrow(rse_gene_SRP045638),
-  sort.by = "none"
+    eb_results,
+    coef = 2,
+    number = nrow(rse_gene_SRP045638),
+    sort.by = "none"
 )
 dim(de_results)
 head(de_results)
@@ -217,7 +216,7 @@ table(de_results$adj.P.Val < 0.05)
 plotMA(eb_results, coef = 2)
 
 
-volcanoplot(eb_results, coef = 2, highlight = 3, names = de_results$gene_name)
+volcanoplot(eb_results, coef = 2, highlight = 3, names = de_results$gene_name) ####IMPORTANTE
 de_results[de_results$gene_name %in% c("ZSCAN2", "VASH2", "KIAA0922"), ]
 
 
@@ -237,12 +236,12 @@ colnames(df) <- c("AgeGroup", "RIN", "Sex")
 ## Hagamos un heatmap
 library("pheatmap")
 pheatmap(
-  exprs_heatmap,
-  cluster_rows = TRUE,
-  cluster_cols = TRUE,
-  show_rownames = FALSE,
-  show_colnames = FALSE,
-  annotation_col = df
+    exprs_heatmap,
+    cluster_rows = TRUE,
+    cluster_cols = TRUE,
+    show_rownames = FALSE,
+    show_colnames = FALSE,
+    annotation_col = df
 )
 
 
@@ -295,44 +294,43 @@ nombres_originales <- rownames(exprs_heatmap)
 
 ## Con match() podemos encontrar cual es cual
 rownames(exprs_heatmap) <- rowRanges(rse_gene_SRP045638)$gene_name[
-  match(rownames(exprs_heatmap), rowRanges(rse_gene_SRP045638)$gene_id)
+    match(rownames(exprs_heatmap), rowRanges(rse_gene_SRP045638)$gene_id)
 ]
 
 
 ## Vean que tambien podriamos haber usado rank()
 identical(
-  which(rank(de_results$adj.P.Val) <= 50),
-  match(nombres_originales, rowRanges(rse_gene_SRP045638)$gene_id)
+    which(rank(de_results$adj.P.Val) <= 50),
+    match(nombres_originales, rowRanges(rse_gene_SRP045638)$gene_id)
 )
 
 
 ## Esta es otra solución
 identical(
-  de_results$gene_name[rank(de_results$adj.P.Val) <= 50],
-  rownames(exprs_heatmap)
+    de_results$gene_name[rank(de_results$adj.P.Val) <= 50],
+    rownames(exprs_heatmap)
 )
 
 
 ## Por último podemos cambiar el valor de show_rownames de FALSE a TRUE
 pheatmap(
-  exprs_heatmap,
-  cluster_rows = TRUE,
-  cluster_cols = TRUE,
-  show_rownames = TRUE,
-  show_colnames = FALSE,
-  annotation_col = df
+    exprs_heatmap,
+    cluster_rows = TRUE,
+    cluster_cols = TRUE,
+    show_rownames = TRUE,
+    show_colnames = FALSE,
+    annotation_col = df
 )
 
 
 ## Guardar la imagen en un PDF largo para poder ver los nombres de los genes
 pdf("pheatmap_con_nombres.pdf", height = 14, useDingbats = FALSE)
 pheatmap(
-  exprs_heatmap,
-  cluster_rows = TRUE,
-  cluster_cols = TRUE,
-  show_rownames = TRUE,
-  show_colnames = FALSE,
-  annotation_col = df
+    exprs_heatmap,
+    cluster_rows = TRUE,
+    cluster_cols = TRUE,
+    show_rownames = TRUE,
+    show_colnames = FALSE,
+    annotation_col = df
 )
 dev.off()
-
