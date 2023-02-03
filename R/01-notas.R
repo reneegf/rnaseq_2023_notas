@@ -7,3 +7,4 @@
 # y el eje y es varianza.
 
 #prenatalprenatal = (col)aprenatal(var)prenatal - (col)prenatal(var)postnatal
+
